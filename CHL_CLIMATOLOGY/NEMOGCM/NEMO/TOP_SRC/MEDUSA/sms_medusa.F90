@@ -244,8 +244,7 @@ MODULE sms_medusa
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:)   :: zb_dms_din  !: 2D avg DIN   (before)
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:)   :: zn_dms_din  !: 2D avg DIN   (now)
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:)   :: za_dms_din  !: 2D avg DIN   (after)
-   !REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:)   ::   CHL_a
-   !!
+!!
 !! 2D fields needing to be knows at first tstp for coupling with atm - UKEMS(Jpalm,14-06-2016)
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:)   :: zb_co2_flx  !: 2D avg fx co2 (before)
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:)   :: zn_co2_flx  !: 2D avg fx co2 (now)
@@ -395,7 +394,7 @@ CONTAINS
          &      zb_dms_qsr(jpi,jpj)  , zn_dms_qsr(jpi,jpj)  ,       &		  
          &      za_dms_qsr(jpi,jpj)  ,                              &
          &      zb_dms_din(jpi,jpj)  , zn_dms_din(jpi,jpj)  ,       &		  
-         &      za_dms_din(jpi,jpj)  ,                          STAT=ierr(4) )
+         &      za_dms_din(jpi,jpj)  ,                           STAT=ierr(4) )
       !* 2D fields needing to be knows at first tstp for coupling with atm -
       !UKEMSi (Jpalm,14-06-2016) 
       ALLOCATE( zb_co2_flx(jpi,jpj)  , zn_co2_flx(jpi,jpj)  ,       &

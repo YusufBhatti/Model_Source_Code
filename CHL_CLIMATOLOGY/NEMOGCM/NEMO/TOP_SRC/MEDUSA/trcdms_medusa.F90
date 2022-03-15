@@ -16,17 +16,14 @@ MODULE trcdms_medusa
       USE oce_trc
       USE trc
       USE sms_medusa
-      USE wrk_nemo 
       USE lbclnk
       USE prtctl_trc      ! Print control for debugging
       USE in_out_manager  ! I/O manager
-      USE iom             ! I/O module
-      USE trc_ini
+
       IMPLICIT NONE
       PRIVATE
 
       PUBLIC   trc_dms_medusa    ! called in trc_bio_medusa
-!      PRINT*,"Calling in CHL_Climatology"
 
    !!* Substitution
 #  include "domzgr_substitute.h90"
@@ -41,7 +38,7 @@ CONTAINS
 
 !=======================================================================
 !
-   SUBROUTINE trc_dms_medusa( chn, chd, mld, xqsr, xdin, xlim,CHL_a, &  !! inputs
+   SUBROUTINE trc_dms_medusa( chn, chd, mld, xqsr, xdin, xlim,  &  !! inputs
      &  dms_andr, dms_simo, dms_aran, dms_hall, dms_andm)           !! outputs
 !      
 !=======================================================================
@@ -99,45 +96,37 @@ CONTAINS
       REAL(wp), INTENT( inout ) :: dms_aran             !! DMS surface concentration (nmol/L) 
       REAL(wp), INTENT( inout ) :: dms_hall             !! DMS surface concentration (nmol/L) 
       REAL(wp), INTENT( inout ) :: dms_andm             !! DMS surface concentration (nmol/L) 
-      REAL(wp), INTENT( in )    :: CHL_a                  !! non-diatom chlorophyll    (mg/m3)
-      !
-      REAL(wp) :: CHL, cmr
+!
+      REAL(wp) :: CHL, cmr, sw_dms
       REAL(wp) :: Jterm, Qterm
       !! temporary variables
       REAL(wp) ::    fq1,fq2,fq3
-      Â!PRINT*,'trc_dms_medusa: SECTION 1'
-      ! 
+! 
 !=======================================================================
 !
 ! AXY (13/03/15): per remarks above, the following calculations estimate
 !                 DMS using all of the schemes examined for UKESM1
 !
-        CHL = 0.0
-        CHL = chn+chd                                 !! mg/m3 
-        cmr = CHL / mld
-!      
+      CHL = 0.0
+      CHL = chn+chd                                 !! mg/m3 
+      cmr = CHL / mld
+!
 ! AXY (13/03/15): Anderson et al. (2001)
 !! JPALM --19-12-2017-- Tunable through the namelist
 !!                      within dmsmin - dmscut - dmsslp
-        !PRINT*,'CHL_a Value =', CHL_a(jpi,jpj)
-
         Jterm = xqsr + 1.0e-6
         !! this next line makes a hard-coded assumption about the 
         !! half-saturation constant of MEDUSA (which should be
         !! done properly; perhaps even scaled with the proportion
         !! of diatoms and non-diatoms)
         Qterm = xdin / (xdin + 0.5)
-        fq1 = log10(CHL_a * Jterm * Qterm)
+        fq1 = log10(CHL * Jterm * Qterm)
         if (fq1 > dmscut) then
            dms_andr = (dmsslp * (fq1 - dmscut)) + dmsmin
         else
            dms_andr = dmsmin
         endif
-        !PRINT*, 'jpj', jpj
-        !PRINT*, 'jpi', jpi
-
-        !PRINT*,'OCEANIC DMS CALCULATION  =', dms_andr
-        !
+!
 ! AXY (13/03/15): Simo & Dachs (2002)
         fq1 = (-1.0 * log(mld)) + 5.7
         fq2 = (55.8 * cmr) + 0.6
@@ -176,12 +165,10 @@ CONTAINS
         fq1 = log10(CHL * Jterm * Qterm)
         if (fq1 > 1.72) then
            dms_andm = (8.24 * (fq1 - 1.72)) + 2.29
-            PRINT*,'OLD_Anderson OCEANIC DMS CALCULATION  =', dms_andm
         else
            dms_andm = 2.29
         endif
-      !  PRINT*,'trc_dms_medusa: End Session' 
-      !  DEALLOCATE( CHL_a )
+
   END SUBROUTINE trc_dms_medusa
 
 
@@ -205,8 +192,7 @@ CONTAINS
 !
 
       WRITE(*,*) 'trc_dms_medusa: You should not have seen this print! error?'
-      PRINT*,'DMS_MEDUSE - error screan?
-            
+
    END SUBROUTINE trc_dms_medusa
 #endif
 

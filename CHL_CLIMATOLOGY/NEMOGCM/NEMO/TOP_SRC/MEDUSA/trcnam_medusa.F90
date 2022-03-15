@@ -251,8 +251,8 @@ CONTAINS
       jdms_model  = 0
       scl_chl     = 1.
       chl_out     = 1
-      dmsmin      = 1 !! Anderson DMS default
-      dmscut      = 1.56 !! Anderson DMS default
+      dmsmin      = 1 !! Anderson DMS default YB22 - TUNED 12/2/22
+      dmscut      = 1.56 !! Anderson DMS default YB22 - TUNED 12/2/22
       dmsslp      = 8.24 !! Anderson DMS default
             
       !REWIND(numnatm)
