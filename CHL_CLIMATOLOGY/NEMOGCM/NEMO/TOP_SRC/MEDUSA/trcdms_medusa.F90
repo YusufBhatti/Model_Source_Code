@@ -19,7 +19,8 @@ MODULE trcdms_medusa
       USE lbclnk
       USE prtctl_trc      ! Print control for debugging
       USE in_out_manager  ! I/O manager
-
+      USE iom             ! I/O module
+      USE trc_ini
       IMPLICIT NONE
       PRIVATE
 
@@ -38,7 +39,7 @@ CONTAINS
 
 !=======================================================================
 !
-   SUBROUTINE trc_dms_medusa( chn, chd, mld, xqsr, xdin, xlim,  &  !! inputs
+   SUBROUTINE trc_dms_medusa( chn, chd, mld, xqsr, xdin, xlim,CHL_a, &  !! inputs # YBH22 - Add CHL_a input
      &  dms_andr, dms_simo, dms_aran, dms_hall, dms_andm)           !! outputs
 !      
 !=======================================================================
@@ -96,12 +97,12 @@ CONTAINS
       REAL(wp), INTENT( inout ) :: dms_aran             !! DMS surface concentration (nmol/L) 
       REAL(wp), INTENT( inout ) :: dms_hall             !! DMS surface concentration (nmol/L) 
       REAL(wp), INTENT( inout ) :: dms_andm             !! DMS surface concentration (nmol/L) 
-!
-      REAL(wp) :: CHL, cmr, sw_dms
+      REAL(wp), INTENT( in )    :: CHL_a                  !! non-diatom chlorophyll    (mg/m3)
+      !
+      REAL(wp) :: CHL, cmr
       REAL(wp) :: Jterm, Qterm
       !! temporary variables
       REAL(wp) ::    fq1,fq2,fq3
-! 
 !=======================================================================
 !
 ! AXY (13/03/15): per remarks above, the following calculations estimate
@@ -110,7 +111,7 @@ CONTAINS
       CHL = 0.0
       CHL = chn+chd                                 !! mg/m3 
       cmr = CHL / mld
-!
+      ! 
 ! AXY (13/03/15): Anderson et al. (2001)
 !! JPALM --19-12-2017-- Tunable through the namelist
 !!                      within dmsmin - dmscut - dmsslp
@@ -120,13 +121,12 @@ CONTAINS
         !! done properly; perhaps even scaled with the proportion
         !! of diatoms and non-diatoms)
         Qterm = xdin / (xdin + 0.5)
-        fq1 = log10(CHL * Jterm * Qterm)
+        fq1 = log10(CHL_a * Jterm * Qterm)
         if (fq1 > dmscut) then
            dms_andr = (dmsslp * (fq1 - dmscut)) + dmsmin
         else
            dms_andr = dmsmin
         endif
-!
 ! AXY (13/03/15): Simo & Dachs (2002)
         fq1 = (-1.0 * log(mld)) + 5.7
         fq2 = (55.8 * cmr) + 0.6
@@ -165,10 +165,10 @@ CONTAINS
         fq1 = log10(CHL * Jterm * Qterm)
         if (fq1 > 1.72) then
            dms_andm = (8.24 * (fq1 - 1.72)) + 2.29
+            PRINT*,'OLD_Anderson OCEANIC DMS CALCULATION  =', dms_andm
         else
            dms_andm = 2.29
         endif
-
   END SUBROUTINE trc_dms_medusa
 
 
@@ -192,7 +192,8 @@ CONTAINS
 !
 
       WRITE(*,*) 'trc_dms_medusa: You should not have seen this print! error?'
-
+      PRINT*,'DMS_MEDUSE - error screan?
+            
    END SUBROUTINE trc_dms_medusa
 #endif
 
