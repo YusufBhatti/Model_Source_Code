@@ -48,7 +48,8 @@ MODULE trcini_medusa
    !! AXY (25/02/10)
    INTEGER ::                          &
       numriv
-
+   !! YAB (22/02/22)
+   INTEGER ::   CHL_Climatology   !: logical unit for CHL DATA (read and write)
    !!----------------------------------------------------------------------
    !! NEMO/TOP 2.0 , LOCEAN-IPSL (2007) 
    !! $Id$
@@ -75,8 +76,8 @@ CONTAINS
       REAL(wp)           :: fthk, tfthk
       !! AXY (04/11/13): add in temporary variables for checks
       REAL(wp)           :: fq0, fq1, fq2
-
-      IF(lwp) WRITE(numout,*)
+      !! YAB (22/02/22) : ADD CHL CLIMATOLOGY FROM MODIS
+      REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:)   ::   CHL_a
       IF(lwp) WRITE(numout,*) ' trc_ini_medusa: initialisation of MEDUSA model'
       IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~~~~'
 # if defined key_debug_medusa
@@ -240,6 +241,19 @@ CONTAINS
       !! Averaged properties for DMS calculations (various units)
       !!----------------------------------------------------------------------
       !!     
+        !!! YAB (22/02/22) - iNPUT CHL CLIMATOLOGY
+      ALLOCATE( CHL_a(jpi,jpj) )
+      PRINT*,'Allocating CHL_a'
+      
+      CALL iom_open( '/nesi/project/niwa02757/ybh10/Objective_2/NEMO/Ancillary_Files/CHL_a_MODIS_GRID_mask-ORCA1_CHL_CLIM_2.nc', CHL_Climatology ) !YB22  Filename - CHL_Clim..
+      PRINT*,'trc_dms_medusa: iom_open'
+      
+      CALL iom_get ( CHL_Climatology, jpdom_data, 'CHL_a', CHL_a(:,:) )  !YB22          
+      PRINT*,'trc_dms_medusa: iom_get'
+        
+      CALL iom_close( CHL_Climatology )
+      PRINT*,'trc_dms_medusa: iom_close'
+
       !! these store temporally averaged properties for DMS calculations (AXY, 07/07/15)
       zb_dms_chn(:,:)  = 0.0  !! CHN
       zn_dms_chn(:,:)  = 0.0
@@ -256,6 +270,7 @@ CONTAINS
       zb_dms_din(:,:)  = 0.0  !! DIN
       zn_dms_din(:,:)  = 0.0
       za_dms_din(:,:)  = 0.0
+      !CHL_a(:,:)       = 0.0  !! Input Chlorophyll from Dataset (Climatology)
       !!
       IF(lwp) WRITE(numout,*) ' trc_ini_medusa: average fields for DMS initialised to zero'
       IF(lwp) CALL flush(numout)

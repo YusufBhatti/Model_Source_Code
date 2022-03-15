@@ -76,7 +76,10 @@ CONTAINS
                                    riv_alk, riv_c, riv_n, riv_si,         &
                                    zn_dms_chd, zn_dms_chn, zn_dms_din,    &
                                    zn_dms_mld, zn_dms_qsr,                &
-                                   xnln, xnld 
+                                   xnln, xnld, CHL_a
+
+                               
+      USE trc_ini                               
       USE trc,               ONLY: med_diag
       USE zdfmxl,            ONLY: hmld
 
@@ -433,7 +436,7 @@ CONTAINS
                      dms_nlim(ji,jj) = zdin(ji,jj) / (zdin(ji,jj) + dms_wtkn(ji,jj))
                      !!
                      CALL trc_dms_medusa(zchn(ji,jj),zchd(ji,jj),             &
-                                         hmld(ji,jj),qsr(ji,jj),              &
+                                         hmld(ji,jj),qsr(ji,jj),CHL_a(ji,jj), &
                                          zdin(ji,jj), dms_nlim(ji,jj),        &
                                          dms_andr,dms_simo,dms_aran,dms_hall, & 
                                          dms_andm)
@@ -444,7 +447,7 @@ CONTAINS
                      !!
                      CALL trc_dms_medusa(zn_dms_chn(ji,jj),zn_dms_chd(ji,jj), &
                                          zn_dms_mld(ji,jj),zn_dms_qsr(ji,jj), &
-                                         zn_dms_din(ji,jj),dms_nlim(ji,jj),   &
+                                         zn_dms_din(ji,jj),dms_nlim(ji,jj),   & !! YAB (22/02/22) - add CHL_a
                                          dms_andr,dms_simo,dms_aran,dms_hall, & 
                                          dms_andm)
                   endif
