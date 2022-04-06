@@ -139,7 +139,7 @@ MODULE trc
                   OCN_KWCO2, OCN_K0, CO2STARAIR, OCN_DPCO2,                                          & ! end of regular 2D
                   TPP3, DETFLUX3, REMIN3N, PH3, OM_CAL3,                                             & ! end of regular 3D
 ! JPALM (01/09/17): additional UKESM 2D diag
-                  CHL_MLD, CHL_CPL,                                                                  &
+                  CHL_MLD, CHL_CPL,CHL_a,                                                                  &
 ! AXY (11/11/16): additional CMIP6 2D diagnostics
                   epC100, epCALC100, epN100, epSI100,                                                &
                   FGCO2, INTDISSIC, INTDISSIN, INTDISSISI, INTTALK, O2min, ZO2min,                   &

@@ -251,8 +251,8 @@ CONTAINS
       jdms_model  = 0
       scl_chl     = 1.
       chl_out     = 1
-      dmsmin      = 1 !! Anderson DMS default YB22 - TUNED 12/2/22
-      dmscut      = 1.56 !! Anderson DMS default YB22 - TUNED 12/2/22
+      dmsmin      = 2.29 !! Anderson DMS default
+      dmscut      = 1.72 !! Anderson DMS default
       dmsslp      = 8.24 !! Anderson DMS default
             
       !REWIND(numnatm)
@@ -956,9 +956,9 @@ CONTAINS
             endif
             if (jdms_model .eq. 1) then
                WRITE(numout,*)     &
-               &   ' Anderson DMS model tuned parameters:                       DMS minimum = ',dmsmin,'. -- tuned = 1 '
+               &   ' Anderson DMS model tuned parameters:                       DMS minimum = ',dmsmin,'. -- Default = 2.29 '
                WRITE(numout,*)     &
-               &   ' Anderson DMS model tuned parameters:                       DMS cutoff  = ',dmscut,'. -- tuned = 1.56 '
+               &   ' Anderson DMS model tuned parameters:                       DMS cutoff  = ',dmscut,'. -- Default = 1.72 '
                WRITE(numout,*)     &
                &   ' Anderson DMS model tuned parameters:                       DMS slope   = ',dmsslp,'. -- Default = 8.24 '
             endif
@@ -2102,6 +2102,11 @@ CONTAINS
           med_diag%CHL_CPL%dgsave = .TRUE.
       ELSE 
           med_diag%CHL_CPL%dgsave = .FALSE.
+      ENDIF
+      IF  (iom_use("CHL_a")) THEN 
+          med_diag%CHL_a%dgsave = .TRUE.
+      ELSE 
+          med_diag%CHL_a%dgsave = .FALSE.
       ENDIF
       !! 3D
       IF  (iom_use("TPP3")) THEN 

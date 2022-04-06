@@ -76,8 +76,7 @@ CONTAINS
                                    riv_alk, riv_c, riv_n, riv_si,         &
                                    zn_dms_chd, zn_dms_chn, zn_dms_din,    &
                                    zn_dms_mld, zn_dms_qsr,                &
-                                   xnln, xnld 
-      USE trc,               ONLY: med_diag
+                                   xnln, xnld, CHL_a
       USE zdfmxl,            ONLY: hmld
 
 # if defined key_roam
@@ -432,17 +431,17 @@ CONTAINS
                      !! use instantaneous inputs
                      dms_nlim(ji,jj) = zdin(ji,jj) / (zdin(ji,jj) + dms_wtkn(ji,jj))
                      !!
-                     CALL trc_dms_medusa(zchn(ji,jj),zchd(ji,jj),             &
-                                         hmld(ji,jj),qsr(ji,jj),              &
-                                         zdin(ji,jj), dms_nlim(ji,jj),        &
-                                         dms_andr,dms_simo,dms_aran,dms_hall, & 
+                     CALL trc_dms_medusa(CHL_a(ji,jj),zchn(ji,jj),zchd(ji,jj),  &
+                                         hmld(ji,jj),qsr(ji,jj),                 &
+                                         zdin(ji,jj), dms_nlim(ji,jj),           &
+                                         dms_andr,dms_simo,dms_aran,dms_hall,    &  
                                          dms_andm)
                   else
                      !! use diel-average inputs
                      dms_nlim(ji,jj) = zn_dms_din(ji,jj) /                    &
                                       (zn_dms_din(ji,jj) + dms_wtkn(ji,jj))
                      !!
-                     CALL trc_dms_medusa(zn_dms_chn(ji,jj),zn_dms_chd(ji,jj), &
+                     CALL trc_dms_medusa(CHL_a(ji,jj),zn_dms_chn(ji,jj),zn_dms_chd(ji,jj), &
                                          zn_dms_mld(ji,jj),zn_dms_qsr(ji,jj), &
                                          zn_dms_din(ji,jj),dms_nlim(ji,jj),   &
                                          dms_andr,dms_simo,dms_aran,dms_hall, & 
@@ -452,6 +451,8 @@ CONTAINS
                   !! assign correct output to variable passed to atmosphere
                   if (jdms_model .eq. 1) then
                      dms_surf = dms_andr
+                     !PRINT*,'Anderson OCEANIC DMS CALCULATION =', dms_andr
+                     PRINT*,'line: 453 - dms_surf = dms_andr'
                   elseif (jdms_model .eq. 2) then
                      dms_surf = dms_simo
                   elseif (jdms_model .eq. 3) then
@@ -465,6 +466,7 @@ CONTAINS
                   !! 2D diag through iom_use
                   IF( med_diag%DMS_SURF%dgsave ) THEN
                      dms_surf2d(ji,jj) = dms_surf
+                     PRINT*,'line 468 air-sea'
                   ENDIF
                   IF( med_diag%DMS_ANDR%dgsave ) THEN
                      dms_andr2d(ji,jj) = dms_andr

@@ -49,6 +49,7 @@ MODULE sms_medusa
    REAL(wp) ::  xthetam   !:  maximum Chl to C ratio for non-diatoms      
    REAL(wp) ::  xthetamd  !:  maximum Chl to C ratio for diatoms    
    REAL(wp) ::  jq10      !:  specific Q10 value (jphy==2)    
+   INTEGER ::   CHL_Climatology   !: logical unit for CHL DATA (read and write) YAB 01/04/22
 !!
 !! Diatom silicon parameters
    REAL(wp) ::  xsin0     !:  minimum diatom Si:N ratio
@@ -253,7 +254,7 @@ MODULE sms_medusa
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:)   :: zn_dms_srf  !: 2D avg sfr dms (now)
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:)   :: za_dms_srf  !: 2D avg srf dms (after)
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:)   :: zn_chl_srf  !: 2D avg srf chl (now)
-
+   REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:)   :: CHL_a       !: ADDED CHL Climatology YAB22 06/04/22  
 #endif
 
 !!----------------------------------------------------------------------
@@ -394,7 +395,7 @@ CONTAINS
          &      zb_dms_qsr(jpi,jpj)  , zn_dms_qsr(jpi,jpj)  ,       &		  
          &      za_dms_qsr(jpi,jpj)  ,                              &
          &      zb_dms_din(jpi,jpj)  , zn_dms_din(jpi,jpj)  ,       &		  
-         &      za_dms_din(jpi,jpj)  ,                           STAT=ierr(4) )
+         &      za_dms_din(jpi,jpj)  , CHL_a(jpi,jpj)       ,    STAT=ierr(4) )
       !* 2D fields needing to be knows at first tstp for coupling with atm -
       !UKEMSi (Jpalm,14-06-2016) 
       ALLOCATE( zb_co2_flx(jpi,jpj)  , zn_co2_flx(jpi,jpj)  ,       &

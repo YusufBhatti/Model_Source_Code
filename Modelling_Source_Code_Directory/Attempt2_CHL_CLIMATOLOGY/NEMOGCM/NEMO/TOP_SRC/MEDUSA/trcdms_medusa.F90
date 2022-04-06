@@ -38,7 +38,7 @@ CONTAINS
 
 !=======================================================================
 !
-   SUBROUTINE trc_dms_medusa( chn, chd, mld, xqsr, xdin, xlim,  &  !! inputs
+   SUBROUTINE trc_dms_medusa(CHLORO, chn, chd, mld, xqsr, xdin, xlim,  &  !! inputs
      &  dms_andr, dms_simo, dms_aran, dms_hall, dms_andm)           !! outputs
 !      
 !=======================================================================
@@ -85,6 +85,7 @@ CONTAINS
 
       IMPLICIT NONE
 !
+      REAL(wp), INTENT( in )    :: CHLORO               !! Chlorophyll Input from MODIS (YAB 06-04-22)
       REAL(wp), INTENT( in )    :: chn                  !! non-diatom chlorophyll    (mg/m3)
       REAL(wp), INTENT( in )    :: chd                  !! diatom chlorophyll        (mg/m3)
       REAL(wp), INTENT( in )    :: mld                  !! mix layer depth           (m)
@@ -120,13 +121,14 @@ CONTAINS
         !! done properly; perhaps even scaled with the proportion
         !! of diatoms and non-diatoms)
         Qterm = xdin / (xdin + 0.5)
-        fq1 = log10(CHL * Jterm * Qterm)
+        fq1 = log10(CHLORO * Jterm * Qterm)
         if (fq1 > dmscut) then
            dms_andr = (dmsslp * (fq1 - dmscut)) + dmsmin
         else
            dms_andr = dmsmin
         endif
-!
+        PRINT*,'DMS_MEDUSA'
+        !
 ! AXY (13/03/15): Simo & Dachs (2002)
         fq1 = (-1.0 * log(mld)) + 5.7
         fq2 = (55.8 * cmr) + 0.6

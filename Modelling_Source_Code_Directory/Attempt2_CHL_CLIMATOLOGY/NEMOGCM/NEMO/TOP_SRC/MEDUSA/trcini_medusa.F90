@@ -24,6 +24,7 @@ MODULE trcini_medusa
    USE par_medusa
    !! AXY (13/01/12): add this in for sediment variables
    USE sms_medusa
+   USE bio_medusa_mod
    !! AXY (04/11/13): add this in for initialisation stuff
    USE trcsed_medusa
    USE sbc_oce, ONLY: lk_oasis
@@ -239,7 +240,21 @@ CONTAINS
       !!----------------------------------------------------------------------
       !! Averaged properties for DMS calculations (various units)
       !!----------------------------------------------------------------------
-      !!     
+      !!    Added CHL_a Climatology dataset YAB 06/04/22
+      CALL iom_open( '/nesi/project/niwa02757/ybh10/Objective_2/NEMO/Ancillary_Files/CHL_a_MODIS_GRID_mask-ORCA1_CHL_CLIM_2.nc', CHL_Climatology ) !YAB22  Filename - CHL_Clim..
+      PRINT*,'trc_dms_medusa: iom_open'
+
+      CALL iom_get ( CHL_Climatology, jpdom_data, 'CHL_a', CHL_a(:,:) )  !YB22          
+      PRINT*,'trc_dms_medusa: iom_get'
+
+      CALL iom_close( CHL_Climatology )
+      PRINT*,'trc_dms_medusa: iom_close'
+
+
+
+
+
+
       !! these store temporally averaged properties for DMS calculations (AXY, 07/07/15)
       zb_dms_chn(:,:)  = 0.0  !! CHN
       zn_dms_chn(:,:)  = 0.0
