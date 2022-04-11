@@ -77,9 +77,8 @@ CONTAINS
                                    zn_dms_chd, zn_dms_chn, zn_dms_din,    &
                                    zn_dms_mld, zn_dms_qsr,                &
                                    xnln, xnld, CHL_a
-      USE trc_ini                               
-      USE trc,               ONLY: med_diag
       USE zdfmxl,            ONLY: hmld
+      USE trc,               ONLY: med_diag
 
 # if defined key_roam
       USE gastransfer,       ONLY: gas_transfer
@@ -108,9 +107,8 @@ CONTAINS
       REAL, PARAMETER :: weight_CO2_mol = 44.0095  !! g / mol
       REAL, PARAMETER :: secs_in_day    = 86400.0  !! s / d
       REAL, PARAMETER :: CO2flux_conv   = (1.e-6 * weight_CO2_mol) / secs_in_day
-
       INTEGER :: iters
-
+       
       !! AXY (23/06/15): additional diagnostics for MOCSY and oxygen
       REAL(wp), DIMENSION(jpi,jpj) :: f_fco2w, f_rhosw
       REAL(wp), DIMENSION(jpi,jpj) :: f_fco2atm
@@ -122,7 +120,7 @@ CONTAINS
       REAL(wp) :: f_kwo2_dum
 # endif
 
-
+ 
 # if defined key_roam
       !! init
       f_fco2w(:,:)       = 0.0
@@ -137,7 +135,7 @@ CONTAINS
       !! pressure at the base of the UKESM1 atmosphere 
       !!                                     
       f_pp0(:,:)   = 1.0
-
+      !PRINT*,'Checking air_sea activated'
 
       !!-----------------------------------------------------------
       !! Air-sea gas exchange
@@ -170,6 +168,7 @@ CONTAINS
             ENDIF
          ENDDO
       ENDDO
+!      PRINT*,'CHL air_sea module = ',CHL_a(ji,jj)
 
 #   if defined key_debug_medusa
                IF (lwp) write (numout,*)                     &
@@ -418,7 +417,8 @@ CONTAINS
       !!                 accounts for differences in nutrient half-saturations; changes 
       !!                 also made in trc_dms_medusa; this permits an additional DMS 
       !!                 calculation while retaining the existing Anderson one 
-      !! 
+      !! i
+     ! PRINT*,'check 3'
       IF (jdms == 1) THEN
          DO jj = 2,jpjm1
             DO ji = 2,jpim1
@@ -433,26 +433,30 @@ CONTAINS
                      !! use instantaneous inputs
                      dms_nlim(ji,jj) = zdin(ji,jj) / (zdin(ji,jj) + dms_wtkn(ji,jj))
                      !!
-                     CALL trc_dms_medusa(zchn(ji,jj),zchd(ji,jj),             &
-                                         hmld(ji,jj),qsr(ji,jj),CHL_a(ji,jj), &
-                                         zdin(ji,jj), dms_nlim(ji,jj),        &
-                                         dms_andr,dms_simo,dms_aran,dms_hall, & 
+      !               PRINT*,'check 1'
+                     CALL trc_dms_medusa(CHL_a(ji,jj),zchn(ji,jj),zchd(ji,jj),  &
+                                         hmld(ji,jj),qsr(ji,jj),                 &
+                                         zdin(ji,jj), dms_nlim(ji,jj),           &
+                                         dms_andr,dms_simo,dms_aran,dms_hall,    &  
                                          dms_andm)
                   else
+       !              PRINT*,'check 2'
                      !! use diel-average inputs
                      dms_nlim(ji,jj) = zn_dms_din(ji,jj) /                    &
                                       (zn_dms_din(ji,jj) + dms_wtkn(ji,jj))
                      !!
-                     CALL trc_dms_medusa(zn_dms_chn(ji,jj),zn_dms_chd(ji,jj), &
+                     CALL trc_dms_medusa(CHL_a(ji,jj), zn_dms_chn(ji,jj),zn_dms_chd(ji,jj), &
                                          zn_dms_mld(ji,jj),zn_dms_qsr(ji,jj), &
-                                         CHL_a(ji,jj),zn_dms_din(ji,jj),      & !! YAB (22/02/22) - add CHL_a
-                                         dms_nlim(ji,jj),dms_andr,dms_simo,   &
-                                         dms_aran,dms_hall,dms_andm)
+                                         zn_dms_din(ji,jj),dms_nlim(ji,jj),   &
+                                         dms_andr,dms_simo,dms_aran,dms_hall, & 
+                                         dms_andm)
                   endif
                   !!
                   !! assign correct output to variable passed to atmosphere
                   if (jdms_model .eq. 1) then
                      dms_surf = dms_andr
+                     !PRINT*,'Anderson OCEANIC DMS CALCULATION =', dms_andr
+                     !PRINT*,'line: 453 - dms_surf = dms_andr'
                   elseif (jdms_model .eq. 2) then
                      dms_surf = dms_simo
                   elseif (jdms_model .eq. 3) then
@@ -466,6 +470,7 @@ CONTAINS
                   !! 2D diag through iom_use
                   IF( med_diag%DMS_SURF%dgsave ) THEN
                      dms_surf2d(ji,jj) = dms_surf
+                     !PRINT*,'line 468 air-sea'
                   ENDIF
                   IF( med_diag%DMS_ANDR%dgsave ) THEN
                      dms_andr2d(ji,jj) = dms_andr

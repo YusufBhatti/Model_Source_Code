@@ -292,9 +292,9 @@
 !!
 !! UKESM1 - new diagnostics !! Jpalm
       chl_out    = 1        !! (IF key_oasis) use surf Chl (1) or mld Chl (2)
-      dmscut     = 1.56     !! (if jdms_model=1) modify Anderson et al. 2001 param
+      dmscut     = 1.72     !! (if jdms_model=1) modify Anderson et al. 2001 param
 !!                             default = 1.72
-      dmsmin     = 1     !! (if jdms_model=1) modify Anderson et al. 2001 dms minimum
+      dmsmin     = 2.29     !! (if jdms_model=1) modify Anderson et al. 2001 dms minimum
 !!                             default = 2.29
       dmsslp     = 8.24     !! (if jdms_model=1) modify Anderson et al. 2001 dms slope
 !!                             default = 8.24

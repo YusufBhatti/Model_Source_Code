@@ -26,7 +26,6 @@ MODULE bio_medusa_mod
    PUBLIC
 
    PUBLIC   bio_medusa_alloc     ! called by trcini.F90
-
    !! model state variables
    REAL(wp), ALLOCATABLE, DIMENSION(:,:) :: zchn,zchd,zphn,zphd,zpds,zzmi
    REAL(wp), ALLOCATABLE, DIMENSION(:,:) :: zzme,zdet,zdtc,zdin,zsil,zfer

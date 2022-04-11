@@ -55,7 +55,6 @@ MODULE trcrst
    PUBLIC   trc_rst_stat
 #if defined key_medusa && defined key_roam
    PUBLIC   trc_rst_conserve
-   !INTEGER ::   CHL_Climatology   !: logical unit for CHL DATA (read and write)      INTEGER ::   CHL_Climatology   !: logical unit for CHL DATA (read and write)
 #endif
 
    !! * Substitutions
@@ -172,20 +171,7 @@ CONTAINS
       !!                 version
 
 #if defined key_medusa
-
-      !! AXY (13/01/12): check if the restart contains sediment fields;LLOCATE( CHL_a(jpi,jpj) )
-!      ALLOCATE( CHL_a(jpi,jpj) )
-!      PRINT*,'Allocating CHL_a'
-  !    CALL iom_open ( 'ccd_ocal_nemo.nc', CHL_Climatology )
-!      CALL iom_open( '/nesi/project/niwa02757/ybh10/Objective_2/NEMO/Ancillary_Files/CHL_      a_MODIS_GRID_mask-ORCA1_CHL_CLIM_2.nc', CHL_Climatology ) !YB22  Filename - CHL_Clim..
-!      IF(lwp) WRITE(numout,*) ' **** trcdms_medusa: CHL_a_MODIS_GRID_mask-ORCA1_CHL_CLIM_2      .nc opened     '
- !     PRINT*,'trc_dms_medusa: iom_open'
- !     !   CALL iom_get ( CHL_Climatology, jpdom_data, 'OCAL_CCD', CHL_a )
-  !    CALL iom_get ( CHL_Climatology, jpdom_data, 'CHL_a', CHL_a(:,:) )  !YB22
-  !    IF(lwp) WRITE(numout,*) ' **** trcdms_medusa: data read'
-  !    PRINT*,'trc_dms_medusa: iom_get'
-      
-  !    CALL iom_close( CHL_Climatology )
+      !! AXY (13/01/12): check if the restart contains sediment fields;
       !!                 this is only relevant for simulations that include
       !!                 biogeochemistry and are restarted from earlier runs
       !!                 in which there was no sediment component

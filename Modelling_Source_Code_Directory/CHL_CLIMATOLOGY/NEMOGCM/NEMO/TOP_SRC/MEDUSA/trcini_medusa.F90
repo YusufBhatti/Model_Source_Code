@@ -24,6 +24,7 @@ MODULE trcini_medusa
    USE par_medusa
    !! AXY (13/01/12): add this in for sediment variables
    USE sms_medusa
+   USE bio_medusa_mod
    !! AXY (04/11/13): add this in for initialisation stuff
    USE trcsed_medusa
    USE sbc_oce, ONLY: lk_oasis
@@ -48,8 +49,7 @@ MODULE trcini_medusa
    !! AXY (25/02/10)
    INTEGER ::                          &
       numriv
-   !! YAB (22/02/22)
-   INTEGER ::   CHL_Climatology   !: logical unit for CHL DATA (read and write)
+
    !!----------------------------------------------------------------------
    !! NEMO/TOP 2.0 , LOCEAN-IPSL (2007) 
    !! $Id$
@@ -76,8 +76,15 @@ CONTAINS
       REAL(wp)           :: fthk, tfthk
       !! AXY (04/11/13): add in temporary variables for checks
       REAL(wp)           :: fq0, fq1, fq2
-      !! YAB (22/02/22) : ADD CHL CLIMATOLOGY FROM MODIS
-      REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:)   ::   CHL_a
+
+!!    Added CHL_a Climatology dataset YAB 06/04/22
+!      CALL iom_open( '/nesi/project/niwa02757/ybh10/Objective_2/NEMO/Ancillary_Files/CHL_a_MODIS_GRID_mask-ORCA1_CHL_CLIM_2.nc', CHL_Climatology ) !YAB22  Filename - CHL_Clim..
+!      PRINT*,'trc_dms_medusa: iom_open'
+ !     CALL iom_get ( CHL_Climatology, jpdom_data, 'CHL_a', CHL_a(:,:) )  !YB22
+  !    PRINT*,'trc_dms_medusa: iom_get'
+  !    CALL iom_close( CHL_Climatology )
+   !   PRINT*,'trc_dms_medusa: iom_close'
+      IF(lwp) WRITE(numout,*)
       IF(lwp) WRITE(numout,*) ' trc_ini_medusa: initialisation of MEDUSA model'
       IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~~~~'
 # if defined key_debug_medusa
@@ -240,19 +247,20 @@ CONTAINS
       !!----------------------------------------------------------------------
       !! Averaged properties for DMS calculations (various units)
       !!----------------------------------------------------------------------
-      !!     
-        !!! YAB (22/02/22) - iNPUT CHL CLIMATOLOGY
-      ALLOCATE( CHL_a(jpi,jpj) )
-      PRINT*,'Allocating CHL_a'
-      
-      CALL iom_open( '/nesi/project/niwa02757/ybh10/Objective_2/NEMO/Ancillary_Files/CHL_a_MODIS_GRID_mask-ORCA1_CHL_CLIM_2.nc', CHL_Climatology ) !YB22  Filename - CHL_Clim..
-      PRINT*,'trc_dms_medusa: iom_open'
-      
-      CALL iom_get ( CHL_Climatology, jpdom_data, 'CHL_a', CHL_a(:,:) )  !YB22          
-      PRINT*,'trc_dms_medusa: iom_get'
-        
-      CALL iom_close( CHL_Climatology )
-      PRINT*,'trc_dms_medusa: iom_close'
+      !!    Added CHL_a Climatology dataset YAB 06/04/22
+     ! CALL iom_open( '/nesi/project/niwa02757/ybh10/Objective_2/NEMO/Ancillary_Files/CHL_a_MODIS_GRID_mask-ORCA1_CHL_CLIM_2.nc', CHL_Climatology ) !YAB22  Filename - CHL_Clim..
+     ! PRINT*,'trc_dms_medusa: iom_open'
+
+     ! CALL iom_get ( CHL_Climatology, jpdom_data, 'CHL_a', CHL_a(:,:) )  !YB22          
+     ! PRINT*,'trc_dms_medusa: iom_get'
+
+     ! CALL iom_close( CHL_Climatology )
+     ! PRINT*,'trc_dms_medusa: iom_close'
+
+
+
+
+
 
       !! these store temporally averaged properties for DMS calculations (AXY, 07/07/15)
       zb_dms_chn(:,:)  = 0.0  !! CHN
@@ -381,12 +389,14 @@ CONTAINS
          IF(lwp) WRITE(numout,*) ' '
          IF(lwp) WRITE(numout,*) ' **** Routine trc_ini_medusa_ccd'
          CALL iom_open ( 'ccd_ocal_nemo.nc', numccd )
+!         PRINT*,'iom open orcal nemo' !! This works
          IF(lwp) WRITE(numout,*) ' **** trc_ini_medusa_ccd: ccd_ocal_nemo.nc opened'
 
       !! Read the data
       !! -------------
       !!
          CALL iom_get ( numccd, jpdom_data, 'OCAL_CCD', ocal_ccd )
+ !        PRINT*,'CHL_a = ',CHL_a !! This works
          IF(lwp) WRITE(numout,*) ' **** trc_ini_medusa_ccd: data read'
 
       !! Close the file
@@ -440,6 +450,7 @@ CONTAINS
          if (jriver_n.eq.1) CALL iom_open ( 'river_N_conc_orca100.nc', numriv )
          if (jriver_n.eq.2) CALL iom_open ( 'river_N_flux_orca100.nc', numriv )
          CALL iom_get  ( numriv, jpdom_data, 'RIV_N', riv_n )
+      !   PRINT*,'iom_get RIV'
          IF(lwp) THEN
             if (jriver_n.eq.1) WRITE(numout,*) ' **** trc_ini_medusa_river: N CONC data read'
             if (jriver_n.eq.2) WRITE(numout,*) ' **** trc_ini_medusa_river: N FLUX data read'
@@ -583,7 +594,7 @@ CONTAINS
             WRITE(numout, '(F6.1,F12.7)') zyy(jn), hist_pco2(jn)
          END DO
       ENDIF
-
+   !PRINT*,'END of trcini'
    END SUBROUTINE trc_ini_medusa_co2atm
 
 
